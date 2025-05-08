@@ -25,7 +25,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const isPasswordValid = await bcrypt.compare(password);
+        const isPasswordValid = await bcrypt.compare(password , user.password );
 
         if (!isPasswordValid) {
             res.status(401).json({
@@ -42,8 +42,8 @@ const login = async (req: Request, res: Response): Promise<void> => {
 
                 id: user._id,
                 email: user.email,
-                firstname:user.firstname,
-                lastname:user.lastname,
+                firstname:user.firstName,
+                lastname:user.lastName,
 
             }
         });
