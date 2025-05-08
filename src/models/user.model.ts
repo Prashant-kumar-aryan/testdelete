@@ -7,11 +7,11 @@ interface Certificate {
 }
 
 export interface IUser extends Document {
-  cognitoId: string; // Unique Cognito user ID (sub)
   role: 'CLIENT' | 'COACH' | 'ADMIN';
   firstName: string;
   lastName: string;
   email: string;
+  password: string;
   preferableActivity?: string;
   target?: string;
   imageUrl?: string;
@@ -25,7 +25,7 @@ export interface IUser extends Document {
   title?: string;
   about?: string;
   specialization?: string[];
-  certificates?: Certificate[]; // Changed from string[] to Certificate[]
+  certificates?: Certificate[]; 
 
   // Admin field
   phoneNumber?: string | null;
@@ -33,11 +33,6 @@ export interface IUser extends Document {
 
 const userSchema = new Schema<IUser>(
   {
-    cognitoId: {
-      type: String,
-      required: [true, 'Cognito user ID is required'],
-      unique: true, 
-    },
     role: {
       type: String,
       enum: ['CLIENT', 'COACH', 'ADMIN'],
@@ -64,6 +59,12 @@ const userSchema = new Schema<IUser>(
       trim: true,
       match: [/.+@.+\..+/, 'Please enter a valid email address'],
     },
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+      trim: true,
+      minlength: [8, 'Password must be at least 8 characters']
+    },
     preferableActivity: {
       type: String,
       enum: ['YOGA', 'PILATES', 'CARDIO', 'WEIGHTS', 'STRENGTH', 'FLEXIBILITY'],
@@ -88,8 +89,6 @@ const userSchema = new Schema<IUser>(
       trim: true,
       default: '',
     },
-    
-    // Rating fields for efficient calculations
     averageRating: {
       type: Number,
       min: 0,
