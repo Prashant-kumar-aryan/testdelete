@@ -42,8 +42,8 @@ const login = async (req: Request, res: Response): Promise<void> => {
             user: {
                 id: user._id,
                 email: user.email,
-                firstname:user.firstName,
-                lastname:user.lastName,
+                firstName:user.firstName,
+                lastName:user.lastName,
                 role: user.role,
             },
             tokens:{
