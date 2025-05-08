@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcrypt";
 import Email from "../models/email.model";
-
+import { generateAccessToken , generateRefreshToken } from "../utils/generateTokens"
 const login = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req.body;
@@ -26,7 +26,8 @@ const login = async (req: Request, res: Response): Promise<void> => {
         }
 
         const isPasswordValid = await bcrypt.compare(password , user.password );
-
+        const accessToken =  generateAccessToken(user._id as string, user.email , user.role);
+        const refreshToken =  generateRefreshToken(user._id as string);
         if (!isPasswordValid) {
             res.status(401).json({
                 success: false,
@@ -39,12 +40,15 @@ const login = async (req: Request, res: Response): Promise<void> => {
             success: true,
             message: "Login successful",
             user: {
-
                 id: user._id,
                 email: user.email,
                 firstname:user.firstName,
                 lastname:user.lastName,
-
+                role: user.role,
+            },
+            tokens:{
+                accessToken,
+                refreshToken,
             }
         });
 
