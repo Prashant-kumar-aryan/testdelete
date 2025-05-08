@@ -1,25 +1,15 @@
 import dotenv from 'dotenv';
-import express from 'express';
 import connectDB from './config/db';
-import userRoutes from './routes/user.routes';
+import app from './app';
 import { errorHandler } from './middlewares/error.middleware';
-
 
 dotenv.config();
 
 // Connect to MongoDB
 connectDB();
 
-const app = express();
-
-// Middleware
-app.use(express.json());
-
-// Error handler
+// Error handler (add this after routes)
 app.use(errorHandler);
-
-// Routes
-app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
