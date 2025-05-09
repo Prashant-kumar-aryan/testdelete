@@ -4,14 +4,6 @@ import multer from 'multer';
 
 const router = express.Router();
 
-router.use((req, res, next) => {
-  console.log(`Request received: ${req.method} ${req.originalUrl}`);
-  console.log('Request body:', req.body);
-  console.log('Query params:', req.query);
-  console.log('Headers:', req.headers);
-  next(); // Pass control to the next middleware or route handler
-});
-
 // Setup Multer
 const storage = multer.memoryStorage();
 const upload = multer({ storage });

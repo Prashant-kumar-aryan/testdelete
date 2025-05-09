@@ -124,7 +124,6 @@ function cleanBase64Data(data: string): string {
 
 export const updateUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log("Called")
     const userId = req.params.userid;
     const updatedData = req.body;
     let failedUploads: any[] = [];
