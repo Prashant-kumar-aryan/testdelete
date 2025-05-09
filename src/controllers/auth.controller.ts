@@ -91,14 +91,15 @@ const addUser = async (req: Request, res: Response) => {
                 ? "COACH"
                 : "CLIENT";
         }
-
+        
         // Hash the password before saving the user
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
+        const specialization=req.body.preferableActivity;
         const user = new User({ 
             ...validationResult.data, // Use the validated data
             password: hashedPassword, 
-            role 
+            role,
+            specialization,
         });
         const savedUser = await user.save();
         res.status(201).json(

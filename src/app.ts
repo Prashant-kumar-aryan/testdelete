@@ -4,9 +4,13 @@ import helmet from "helmet";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 const app = express();
+const corsOptions = {
+    origin: 'http://localhost:5173', 
+    optionsSuccessStatus: 200 
+  }
 
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cors());
 app.use(helmet());
 
 // app.use("/api/users", userRoutes);
