@@ -9,7 +9,6 @@ const app = express();
 // Middleware
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-
 app.use(helmet());
 app.use(cors({
   origin: '*', // API Gateway address
