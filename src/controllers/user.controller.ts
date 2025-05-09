@@ -38,18 +38,20 @@ export const passwordUpdate = async (
       return;
     }
 
+    // Validate all input fields first
     const { oldPassword, newPassword, confirmPassword } = req.body;
-
     if (!oldPassword || !newPassword || !confirmPassword) {
       res.status(400).json({ message: "All fields are required" });
       return;
     }
 
+    // Check if new password and confirm password match
     if (newPassword !== confirmPassword) {
       res.status(400).json({ message: "New password and confirm password do not match" });
       return;
     }
 
+    // Validate password strength/requirements
     try {
       registerSchema.shape.password.parse(newPassword);
     } catch (error) {
@@ -57,29 +59,46 @@ export const passwordUpdate = async (
         res.status(400).json({ message: error.errors[0].message });
         return;
       }
+      throw error; // Re-throw unexpected errors
     }
 
+    // Find the user
     const user = await User.findById(userId);
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
     }
 
-    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
-    if (!isPasswordValid) {
+    // Verify the old password
+    const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isOldPasswordValid) {
       res.status(401).json({ message: "Current password is incorrect" });
       return;
     }
 
+    // Check if new password is same as old password
+    const isSameAsOld = await bcrypt.compare(newPassword, user.password);
+    if (isSameAsOld) {
+      res.status(400).json({ message: "New password cannot be the same as the old password" });
+      return;
+    }
+
+    // Update the password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     await user.save();
 
-    res.status(200).json({ success: "true", message: "Password updated successfully" });
-  } catch (error: any) {
-    if (error.name === "CastError") {
-      res.status(400).json({ message: "Invalid ID format", error: error.message });
+    res.status(200).json({ success: true, message: "Password updated successfully" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.name === "CastError") {
+        res.status(400).json({ message: "Invalid ID format", error: error.message });
+      } else {
+        console.error("Password update error:", error);
+        res.status(500).json({ message: "Server Error" });
+      }
     } else {
+      console.error("Unknown password update error:", error);
       res.status(500).json({ message: "Server Error" });
     }
   }
