@@ -6,7 +6,6 @@
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "types": ["express"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
